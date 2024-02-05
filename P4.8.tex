@@ -1,0 +1,71 @@
+\documentclass[a4paper]{article}
+\usepackage{geometry}
+\geometry{left=2.5cm,right=2.5cm}
+\usepackage[UTF8]{ctex}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\def\bm{\boldsymbol}
+\floatname{algorithm}{习题}
+\algnewcommand\Process{\item[\textbf{过程：}]}
+\algnewcommand\Or{\ \textbf{OR}\ }
+\algnewcommand\Break{\textbf{break}}
+\algnewcommand\Continue{\textbf{continue}}
+\algrenewcommand{\algorithmicrequire}{\textbf{输入：}}
+\algrenewcommand{\algorithmicensure}{\textbf{输出：}}
+
+\begin{document}
+
+\renewcommand{\thealgorithm}{4.8}
+\begin{algorithm}[H]
+    \caption{以参数$\mathtt{MaxNode}$控制最大深度的BFS决策树算法}
+    \begin{algorithmic}[1]
+        \Require{训练集~$D=\{(\bm x_1,y_1),(\bm x_2,y_2),\cdots,(\bm x_m,y_m)\}$；
+
+属性集~$A=\{a_1,a_2,\cdots,a_d\}$；
+
+最大结点数~$\mathtt{MaxNode}$。}
+        \Process{函数~$\mathtt{TreeGenerate\_BFS\_MaxNode}(D, A, \mathtt{MaxNode})$}
+        
+        \State{创建空队列~$\mathtt{queue}$;}
+        \State{生成结点~$\mathtt{root}$;}
+        \State{将~$(\mathtt{root}, D, A)$~入~$\mathtt{queue}$~队尾;}
+        \State{$\mathtt{count}\gets1$;}\Comment\textit{初始化结点个数}
+
+        \While{$\mathtt{queue}$~不为空}
+            \State{从~$\mathtt{queue}$~队头出队~$(\mathtt{node}, D_\mathrm h, A_\mathrm h)$;}
+
+            \If{$D_\mathrm h$~中样本全属于同一类别~$C$}
+                \State{将~$\mathtt{node}$~标记为~$C$~类叶结点; }\Continue
+            \EndIf
+
+            \If{$A_\mathrm h=\varnothing$\Or$D_\mathrm h$~中样本在~$A_\mathrm h$~上取值相同}
+                \State{将~$\mathtt{node}$~标记为叶结点，其类别标记为~$D_\mathrm h$~中样本数最多的类; }\Continue
+            \EndIf
+
+            \State{从~$A_\mathrm h$~中选择最优划分属性~$a^*$;}
+            \For{$a^*$~的每一个值~$a^*_v$}
+                \State{为~$\mathtt{node}$~生成一个分支~$\mathtt{child}_v$; 令~$D_v$~表示~$D_\mathrm h$~中在属性~$a^*$~上取值为~$a^*_v$~的样本子集;}
+                \State{$\mathtt{count} \gets \mathtt{count}+1$;}
+
+                \If{$\mathtt{count} \ge \mathtt{MaxNode}$}
+                    \State{将~$\mathtt{child}_v$~标记为叶结点，其类别标记为~$D_\mathrm h$~中样本数最多的类; }\Break\ \algorithmicwhile
+                \EndIf
+
+                \If{$D_v$~为空}
+                    \State{将~$\mathtt{child}_v$~标记为叶结点，其类别标记为~$D_\mathrm h$~中样本数最多的类; }
+                \Else
+                    \State{将~$(\mathtt{child}_v, D_v, A \setminus \{a^*\})$~入~$\mathtt{queue}$~队尾;}
+                \EndIf
+            \EndFor
+        \EndWhile
+
+        \Ensure{以~$\mathtt{root}$~为根结点的一颗决策树}
+    \end{algorithmic}
+\end{algorithm}
+
+二者均为~BFS~算法。仅从内存角度考虑，$\mathtt{MaxDepth}$~的策略需要对队列中每个结点都多存储一个深度值，且决策树广度较大时可能无法较好地限制结点数量的增长，而~$\mathtt{MaxNode}$~策略从结点数量上限制，能同时限制深度和广度的增长，故~$\mathtt{MaxNode}$~策略更佳。
+
+\end{document}
