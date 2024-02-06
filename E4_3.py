@@ -2,6 +2,11 @@ import pandas as pd
 import numpy as np
 
 
+def np_mode(array):
+    values, counts = np.unique(array, return_counts=True)
+    return values[np.argmax(counts)]
+
+
 def calc_entropy(labels):
     _, counts = np.unique(labels, return_counts=True)
     label_probs = counts / len(labels)
@@ -53,7 +58,7 @@ def decision_tree(features, labels, feature_names, criterion_func, feature_value
         return node
 
     if len(feature_names) == 0 or all([len(np.unique(featuresT[i])) == 1 for i in range(len(featuresT))]):
-        node = np.unique(labels_np)[np.argmax(np.unique(labels_np, return_counts=True)[1])]
+        node = np_mode(labels_np)
         # print(f'返回情形2：叶结点{node}')
         return node
 
@@ -66,7 +71,7 @@ def decision_tree(features, labels, feature_names, criterion_func, feature_value
     node = {optimal_feature_name: {}}
     for value in optimal_feature_values:
         if len([f for f in featuresT[optimal_feature_index] if f == value]) == 0:
-            child = np.unique(labels_np)[np.argmax(np.unique(labels_np, return_counts=True)[1])]
+            child = np_mode(labels_np)
             # print(f'返回情形3：叶结点{child}')
             # return child
         else:
