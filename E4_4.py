@@ -78,7 +78,7 @@ class DecisionTree:
         self._check_fit()
         print(self.root)
 
-    def prune(self, features_train, features_test, labels_train, labels_test, feature_values={}, prune='none'):
+    def prune(self, features_train, features_test, labels_train, labels_test, prune='none', feature_values={}):
         feature_names = features_train.columns
         if prune.lower() in ['false', 'none', '无', '不剪枝']:
             self.fit(features_train, labels_train, feature_values)
@@ -86,7 +86,7 @@ class DecisionTree:
             self.fit(features_train, labels_train, feature_values, train=False)
             self.root = self._preprune(features_train, features_test, labels_train, labels_test, feature_names)
         elif prune.lower() in ['post', 'postprune', 'post-prune', 'post-pruning', '后剪枝']:
-            self.fit(features_train, labels_train, feature_values)
+            self.fit(features_train, labels_train, feature_values, train=False)
             self.root = self._postprune(features_train, features_test, labels_train, labels_test, feature_names)
         else:
             raise ValueError('无效的剪枝方法')
@@ -239,11 +239,11 @@ if __name__ == '__main__':
     print('未剪枝决策树：')
     tree.print()
     print(f'测试集精度：{tree.evaluate(features_test, labels_test)}')
-    tree.prune(features_train, features_test, labels_train, labels_test, feat_values, 'pre')
+    tree.prune(features_train, features_test, labels_train, labels_test, 'pre', feat_values)
     print('预剪枝决策树：')
     tree.print()
     print(f'测试集精度：{tree.evaluate(features_test, labels_test)}')
-    tree.prune(features_train, features_test, labels_train, labels_test, feat_values, 'post')
+    tree.prune(features_train, features_test, labels_train, labels_test, 'post', feat_values)
     print('后剪枝决策树：')
     tree.print()
     print(f'测试集精度：{tree.evaluate(features_test, labels_test)}')

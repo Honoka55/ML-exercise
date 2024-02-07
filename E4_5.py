@@ -43,32 +43,45 @@ class LogisticRegressionDecisionTree(DecisionTree):
 
         if all([len(np.unique(features_np.T[i])) == 1 for i in range(len(features_np.T))]):
             node = np_mode(labels_np)
-            print(f'返回情形2：叶结点{node}')
             return node
 
         coefficients = logistic_regression(features_np, labels_np).ravel()
         classifier, classifier_name = self._get_classifier(coefficients)
-        node = {classifier_name: {}}
 
-        classified_yes_list = []
+        classified_no_list = []
         for i in range(len(features)):
             f = features.iloc[i]
             f_np = f.to_numpy()
             if classifier(f_np):
-                classified_yes_list.append(i)
+                classified_no_list.append(i)
 
-        classified_features = [labels.drop(classified_yes_list), labels[classified_yes_list]]
-        classified_labels = [labels.drop(classified_yes_list), labels[classified_yes_list]]
+        classified_features = [labels[classified_no_list], labels.drop(classified_no_list)]
+        classified_labels = [labels[classified_no_list], labels.drop(classified_no_list)]
 
+        node = {classifier_name: {}}
         for i in range(2):
             if len(classified_features[i]) == 0:
                 child = np_mode(classified_labels[i])
-                print(f'返回情形3：叶结点{child}')
             else:
                 child = self._train(classified_features[i], classified_labels[i])
             node[classifier_name]['是' if i else '否'] = child
 
         return node
+
+    def _predict(self, node, feature):
+        if isinstance(node, dict):
+            feature_name = next(iter(node))
+            classifier_str = feature_name.replace('×', '*').replace('≤', '<=')
+            for col in self.column_names:
+                classifier_str = classifier_str.replace(col, str(feature[col]))
+            print(classifier_str)
+            feature_value = eval(classifier_str)
+            for condition in node[feature_name]:
+                condition_value = True if condition == '是' else False
+                if feature_value == condition_value:
+                    return self._predict(node[feature_name][condition], feature)
+        else:
+            return node
 
 
 if __name__ == '__main__':
