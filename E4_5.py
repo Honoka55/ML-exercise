@@ -74,7 +74,6 @@ class LogisticRegressionDecisionTree(DecisionTree):
             classifier_str = feature_name.replace('×', '*').replace('≤', '<=')
             for col in self.column_names:
                 classifier_str = classifier_str.replace(col, str(feature[col]))
-            print(classifier_str)
             feature_value = eval(classifier_str)
             for condition in node[feature_name]:
                 condition_value = True if condition == '是' else False
