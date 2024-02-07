@@ -36,7 +36,7 @@ def gradient_descent(x, y, learning_rate, accuracy):
         dif = np.linalg.norm(minus_log_likelihood(w, x, y) - minus_log_likelihood(old_w, x, y))
         count += 1
 
-        if count > 10000:
+        if count >= 10000:
             break
         # print(f'当前w为{w.T}，函数值为{minus_log_likelihood(w, x, y)}，梯度为{grad_minus_log_likelihood(w, x, y).T}')
 
@@ -62,7 +62,7 @@ def newton_method(x, y, accuracy):
         dif = abs(minus_log_likelihood(w, x, y) - minus_log_likelihood(old_w, x, y))
         count += 1
 
-        if count > 10000:
+        if count >= 10000:
             break
         # print(f'当前w为{w.T}，函数值为{minus_log_likelihood(w, x, y)}，梯度为{grad_minus_log_likelihood(w, x, y).T}')
 
@@ -72,7 +72,7 @@ def newton_method(x, y, accuracy):
 
 def sklearn_logistic_regression(x, y, C=1e5):
     logreg = LogisticRegression(C=C)
-    logreg.fit(x[:, 0:2], y.ravel().astype(int))
+    logreg.fit(x[:, 0:-1], y.ravel().astype(int))
     w = np.append(logreg.coef_, logreg.intercept_).reshape(-1, 1)
     return w
 
@@ -92,8 +92,8 @@ def draw_graph(x, y, w, method, count):
     grid_predictions = np.c_[xx.ravel(), yy.ravel(), np.ones_like(xx.ravel())] @ w
     grid_predictions = grid_predictions.reshape(xx.shape)
 
-    plt.contour(xx, yy, grid_predictions, levels=[0.5], linewidths=2)
-    plt.contourf(xx, yy, grid_predictions, levels=[-100, 0.5, 100], cmap=plt.cm.RdYlBu, alpha=0.7)
+    plt.contour(xx, yy, grid_predictions, levels=[0], linewidths=2)
+    plt.contourf(xx, yy, grid_predictions, levels=[-10000, 0, 10000], cmap=plt.cm.RdYlBu, alpha=0.7)
 
     scatter = plt.scatter(x.iloc[:, 0], x.iloc[:, 1], c=y, cmap=plt.cm.RdYlBu, edgecolors='k', marker='o')
 
