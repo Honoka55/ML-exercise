@@ -4,9 +4,21 @@ from sklearn.linear_model import LogisticRegression
 from E4_4 import DecisionTree, np_mode
 
 
-def logistic_regression(x, y, C=1e5):
+def one_hot_encode(df):
+    df = pd.get_dummies(df, prefix_sep='=')
+    column_names = []
+    for name in df.columns:
+        if '=' in name:
+            column_names.append(f'𝕀({name})')
+        else:
+            column_names.append(name)
+    df.columns = column_names
+    return df
+
+
+def logistic_regression(X, y, C=1e5):
     logreg = LogisticRegression(C=C)
-    logreg.fit(x, y)
+    logreg.fit(X, y)
     w = np.append(logreg.coef_, logreg.intercept_)
     return w
 
@@ -30,7 +42,7 @@ def make_classifier_str(coefs, col_names):
 
 class LogisticRegressionDecisionTree(DecisionTree):
     def __init__(self):
-        super().__init__(criterion_func=make_classifier)
+        super().__init__(criterion_func=None)
         self.column_names = []
 
     def fit(self, features, labels, feature_values={}, train=True):
@@ -94,14 +106,7 @@ if __name__ == '__main__':
     df = pd.read_csv('data/3.0.csv')
     features = df.iloc[:, 1:-1]
     labels = df.iloc[:, -1].map({'是': 1, '否': 0})
-    features = pd.get_dummies(features, prefix_sep='=')
-    column_names = []
-    for name in features.columns:
-        if '=' in name:
-            column_names.append(f'𝕀({name})')
-        else:
-            column_names.append(name)
-    features.columns = column_names
+    features = one_hot_encode(features)
 
     tree = LogisticRegressionDecisionTree()
     tree.fit(features, labels)
