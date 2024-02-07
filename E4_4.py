@@ -115,10 +115,10 @@ class DecisionTree:
 
         optimal_feature_index = self.crit_func(featuresT, labels_train_np)
         optimal_feature_name = feature_names[optimal_feature_index]
-        if optimal_feature_name in self.float_feats:
-            optimal_feature_values = np.unique(featuresT[optimal_feature_index])
-        else:
+        if optimal_feature_name not in self.float_feats and optimal_feature_name in self.feat_values:
             optimal_feature_values = self.feat_values[optimal_feature_name]
+        else:
+            optimal_feature_values = np.unique(featuresT[optimal_feature_index])
 
         before_node = np_mode(labels_train_np)
         before_accuracy = sum(labels_test_np == before_node) / len(labels_test_np)
@@ -187,10 +187,10 @@ class DecisionTree:
 
         optimal_feature_index = self.crit_func(featuresT, labels_train_np)
         optimal_feature_name = feature_names[optimal_feature_index]
-        if optimal_feature_name in self.float_feats:
-            optimal_feature_values = np.unique(featuresT[optimal_feature_index])
-        else:
+        if optimal_feature_name not in self.float_feats and optimal_feature_name in self.feat_values:
             optimal_feature_values = self.feat_values[optimal_feature_name]
+        else:
+            optimal_feature_values = np.unique(featuresT[optimal_feature_index])
 
         after_node = np_mode(labels_train_np)
         after_accuracy = sum(labels_test_np == after_node) / len(labels_test_np)
