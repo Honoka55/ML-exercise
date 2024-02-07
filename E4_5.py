@@ -1,12 +1,19 @@
 import pandas as pd
 import numpy as np
-from E3_3 import sklearn_logistic_regression as logistic_regression
+from sklearn.linear_model import LogisticRegression
 from E4_4 import DecisionTree, np_mode
+
+
+def logistic_regression(x, y, C=1e5):
+    logreg = LogisticRegression(C=C)
+    logreg.fit(x, y)
+    w = np.append(logreg.coef_, logreg.intercept_)
+    return w
 
 
 def make_classifier(coefs):
     def classifier(x):
-        np.append(x, 1)
+        x = np.append(x, 1)
         pred = np.dot(coefs, x)
         return 1 if pred > 0 else 0
 
@@ -45,7 +52,7 @@ class LogisticRegressionDecisionTree(DecisionTree):
             node = np_mode(labels_np)
             return node
 
-        coefficients = logistic_regression(features_np, labels_np).ravel()
+        coefficients = logistic_regression(features_np, labels_np)
         classifier, classifier_name = self._get_classifier(coefficients)
 
         classified_no_list = []
