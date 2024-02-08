@@ -74,8 +74,8 @@ class LogisticRegressionDecisionTree(DecisionTree):
             if classifier(f_np):
                 classified_no_list.append(i)
 
-        classified_features = [labels[classified_no_list], labels.drop(classified_no_list)]
-        classified_labels = [labels[classified_no_list], labels.drop(classified_no_list)]
+        classified_features = [features.iloc[classified_no_list], features.drop(classified_no_list)]
+        classified_labels = [labels.iloc[classified_no_list], labels.drop(classified_no_list)]
 
         node = {classifier_name: {}}
         for i in range(2):
